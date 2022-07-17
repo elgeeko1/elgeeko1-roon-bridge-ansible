@@ -1,0 +1,23 @@
+roon_hostname: "{{ inventory_hostname }}"
+roon_bridge_path: /opt/RoonBridge # path on the host to store roon data
+
+# docker network mode for roon container
+# values:
+#   host: least secure, easiest to configure, all features
+#   macvlan: more secure, more complicated configuration, all features
+#   bridge: most secure, RAAT devices not discoverable (requires multicast & broadcast)
+roon_network_mode: host
+
+# run Roon Server in a privileged container?
+roon_container_privileged: false
+
+# in macvlan mode, the macvlan network settings
+# this may work out of the box but docker will
+# assign an arbitrary IP address which may conflict
+# with your network; better to override in your playbook
+roon_network_macvlan:
+  name:         "roon"
+  subnet:       "{{ (ansible_default_ipv4.network ~ '/' ~ ansible_default_ipv4.netmask) | ipaddr('network/prefix') }}"
+  gateway:      "{{ ansible_default_ipv4.gateway }}"
+  interface:    "{{ ansible_default_ipv4.interface }}"
+  ipv4_address: "" # if empty, ipv4 will be automatically set by docker

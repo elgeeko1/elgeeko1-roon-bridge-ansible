@@ -1,0 +1,11 @@
+galaxy_info:
+  role_name: elgeeko1-roon-bridge-ansible
+  author: elgeeko1
+  description: "Deploy Roon Bridge in a docker container."
+  license: MIT
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+collections:
+  - community.general
