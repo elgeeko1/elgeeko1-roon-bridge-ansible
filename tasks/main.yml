@@ -8,8 +8,5 @@
 - name: Configure audio system
   ansible.builtin.import_tasks: audio.yml
 
-- name: Configure filesystem
-  ansible.builtin.import_tasks: filesystem.yml
-
 - name: Start Roon Bridge
   ansible.builtin.import_tasks: roon-bridge-docker.yml

@@ -1,5 +1,6 @@
+roon_docker_tag: latest
+
 roon_hostname: "{{ inventory_hostname }}"
-roon_bridge_path: /opt/RoonBridge # path on the host to store roon data
 
 # docker network mode for roon container
 # values:
