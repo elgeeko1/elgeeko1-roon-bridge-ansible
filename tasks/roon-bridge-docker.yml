@@ -44,11 +44,12 @@
     hostname: "{{ roon_hostname }}"
     publish_all_ports: true
     privileged: "{{ roon_container_privileged }}"
+    user: "{{ roon_container_user }}"
     groups:
       - "{{ getent_group.audio[1] }}"
     volumes:
       - roon-bridge-data:/opt/RoonBridge
-      - roon-bridge-cache:/var/roon"
+      - roon-bridge-cache:/var/roon
       - /run/udev:/run/udev:ro # allow querying USB information
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -64,3 +65,4 @@
     network_mode: "{{ roon_network_mode }}"
     networks_cli_compatible: false
     purge_networks: "{{ roon_network_mode == 'macvlan' }}"
+    log_driver: "local"  # default doesn't log rotate
