@@ -64,12 +64,12 @@ Host network mode is set with the role variable
 `roon_network_mode: host`
 
 ### Macvlan network mode
-Alternately the Roon Bridge container can run with the `macvlan` network mode,
-which is the most secure configuration that still allows Roon to discover RAAT
-devices like Roon Bridge and Ropieee, which require broadcast and multicast
-messaging.
+Alternately the Roon Bridge container can run with the `macvlan` network mode, which is both robust in that the container appears to be on your
+local network, and secure in that it runs in an isolated docker network.
 
-Macvlan network mode is set by the following role variables:
+*Warning* macvlan network mode does not work over wireless connections.
+
+macvlan network mode is set by the following role variables:
 ```
 roon_network_mode: macvlan
 roon_network_macvlan:
@@ -81,10 +81,10 @@ roon_network_macvlan:
 ```
 
 ### Bridged network mode
-Lastly, this role can configure the Roon Bridge container to run with the
-`bridge` network mode, which is arguably the most secure as it has the most restrictive
-network access, however in bridge mode, RAAT devices are not discoverable, as broadcast
-and multicast messages are not available to the container.
+This mode is unsupported and should only be used if you will access roon-bridge
+from within the same Docker bridge network. roon-bridge will not be discoverable
+over a network as broadcast and multicast messages are not supported in bridge
+mode.
 
 Bridged network mode is set with the role variable
 `roon_network_mode: bridge`

@@ -1,0 +1,4 @@
+# ports to publish from the container
+roon_published_ports:
+  - 9003:9003/udp
+  - 9100-9200:9100-9200/tcp

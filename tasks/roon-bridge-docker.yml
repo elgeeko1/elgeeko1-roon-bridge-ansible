@@ -4,7 +4,6 @@
     name: elgeeko/roon-bridge:{{ roon_docker_tag }}
     source: pull
     force_source: true
-  register: dockerimage
 
 - name: Configure Docker network {{ roon_network_macvlan.name }}
   community.general.docker_network:
@@ -17,7 +16,6 @@
     ipam_config:
       - subnet:  "{{ roon_network_macvlan.subnet }}"
         gateway: "{{ roon_network_macvlan.gateway }}"
-  register: dockernetwork
 
 - name: Create docker volume roon-bridge-data
   community.docker.docker_volume:
@@ -37,12 +35,14 @@
     name: roon-bridge
     image: elgeeko/roon-bridge:{{ roon_docker_tag }}
     state: started
-    recreate: "{{ dockerimage.changed or dockernetwork.changed }}"
+    comparisons:
+      image: strict
+      networks: strict
+      env: strict
     restart_policy: unless-stopped
     cleanup: true
     keep_volumes: false
     hostname: "{{ roon_hostname }}"
-    publish_all_ports: true
     privileged: "{{ roon_container_privileged }}"
     user: "{{ roon_container_user }}"
     groups:
@@ -56,13 +56,17 @@
     devices:
       - /dev/bus/usb
       - /dev/snd
-    # attach to macvlan network in macvlan mode, otherwise leave empty
-    networks: "{{ (roon_network_mode == 'macvlan') \
-      | ternary( \
-        [{'name': roon_network_macvlan.name, \
-          'ipv4_address': roon_network_macvlan.ipv4_address}], \
-        [] ) }}"
     network_mode: "{{ roon_network_mode }}"
-    networks_cli_compatible: false
-    purge_networks: "{{ roon_network_mode == 'macvlan' }}"
+    networks: "{{ (roon_network_mode == 'macvlan') | ternary( \
+          [{'name': roon_network_macvlan.name, 'ipv4_address': roon_network_macvlan.ipv4_address}], \
+          [{'name': roon_network_mode }]  ) }}"
+    ports: "{{ (roon_network_mode == 'host') | ternary([], roon_published_ports) }}"
     log_driver: "local"  # default doesn't log rotate
+
+- name: Verify network discoverability
+  ansible.builtin.assert:
+    that:
+      - roon_network_mode != 'bridge'
+    fail_msg: "WARNING: roon-bridge is not network discoverable in network mode 'bridge'"
+    success_msg: roon-bridge is network discoverable
+  ignore_errors: true
