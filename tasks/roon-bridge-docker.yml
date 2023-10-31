@@ -56,7 +56,6 @@
     devices:
       - /dev/bus/usb
       - /dev/snd
-    network_mode: "{{ roon_network_mode }}"
     networks: "{{ (roon_network_mode == 'macvlan') | ternary( \
           [{'name': roon_network_macvlan.name, 'ipv4_address': roon_network_macvlan.ipv4_address}], \
           [{'name': roon_network_mode }]  ) }}"
